@@ -1,0 +1,107 @@
+//Array to store all possibe number of cards
+// its empty now because we dont want the program to
+// assign cards before the user starts the game (i.e click start game button)
+let cards = []
+let sum = 0
+// variable to let the progran know if the player has blackjack
+// i.e if the user sum of cards is 21
+let blackjack = false
+// variable to check if the user has lost the game or is still in it
+// i.e if the user sum of cards is above 21 or below 21 but not 21
+// if sum is above 21 isAlive = false 
+// else sum < 21 isAlive = true meaning the user hasnt lost yet
+let isAlive = false
+// variables used to manipulate the html documents(DOM)
+// i.e so you can display the number of cards and sum of cards
+// on the html documents
+let message = document.getElementById("message")
+let cardsEl = document.getElementById("cards-el")
+let sumEl = document.getElementById("sum-el")
+let playerEl = document.getElementById("player-el")
+// function that starts the game, it renders another function
+// "rendergame()", this function is the actual working of the game
+
+//Player object
+// hardcoded palyer's name and chips(coins)
+let player = {
+	name: "caleb",
+	chips: 150 
+}
+
+function getRandomCard() {
+	randomNumber = Math.floor(Math.random() * 13) + 1
+	if (randomNumber === 1) {
+		return 11
+	} else if (randomNumber > 10) {
+		return 10
+	} else {
+		return randomNumber
+	}
+}
+
+// function to startgame and call the render game function
+// 1) set the isAlive varaible to true to tell the program that the
+//    user is still in the game and to also permit the user to be able
+//    to draw a new card
+// 2) it also assigns initial values to num1 and num2 variables so it can be rendered in
+//    the html document in the render game function
+function startGame(){
+	isAlive = true
+	let num1 = getRandomCard()
+	let num2 = getRandomCard()
+	cards = [num1, num2]
+	sum = num1 + num2
+
+
+	renderGame()
+}
+
+
+// THe working/ mechanics of the game
+function renderGame() {
+	// used to display the number of cards and also the sum of cards
+	// on the webpage(html document)
+	sumEl.textContent = "sum: " + " " + sum
+	cardsEl.textContent = "cards: " + " " + cards
+	// render the player attributes to html doc from the player object
+	playerEl.textContent = player.name +": "+ player.chips + "$"
+	
+
+	// check if sum of cards is <= 20
+	// if true then game is not over yet (isAlive = true)
+	// and player has option of picking new card to get closer to 21(Blackjack)
+	if (sum <= 20){ 
+		// changing the html document(DOM) to ask user if... 
+		// new card is needed
+		message.textContent = "Do you want to draw a new card" 
+		isAlive = true
+		//console.log(isAlive)
+
+	} else if(sum === 21){
+		message.textContent = "You have blackjack you won"
+		blackjack = true
+	}else {
+		message.textContent = "You have lost"
+		isAlive = false
+	}
+	console.log(message)
+}
+
+
+// function to spawn new cards if needed
+function newCard() {
+	console.log("button is clicked")
+	// to check if the user can still generate new card 
+	// i.e if game is not over or if user already has black jack
+	if (isAlive == true && blackjack == false ){
+		let newcard = getRandomCard()
+		// adding the new card to the sum variable so that the sum
+		// of the old already existing cards can be added to the new card 
+		// to produce a new sum (Total of new + old card)
+		sum += newcard
+		//adding the new card to the cards array
+		// so it can be dispalyed in the DOM
+		cards.push(newcard)
+		renderGame()
+	}
+}
